@@ -51,7 +51,8 @@ async function clean($: EngineInterface, dir: string, all: boolean): Promise<num
   if (old.length > 0) await run($, ['rm', '-f', '--', ...old])
   // The diagram library copy is only there for pages; it goes with the last one.
   const lib = `${dir}/${MERMAID_FILE}`
-  if (await $.fs.exists(lib) && !(await $.fs.list(dir)).some(f => f.kind === 'file' && f.name.endsWith('.html'))) await run($, ['rm', '-f', '--', lib])
+  const libs = [lib, `${lib}.gz`]
+  if ((await Promise.all(libs.map(f => $.fs.exists(f)))).some(Boolean) && !(await $.fs.list(dir)).some(f => f.kind === 'file' && f.name.endsWith('.html'))) await run($, ['rm', '-f', '--', ...libs])
   return pages.length
 }
 
@@ -149,11 +150,13 @@ async function makePage($: EngineInterface, open: boolean): Promise<{ path: stri
   const css = `${await asset('fonts.css')}\n${await asset('github-markdown.css')}\n${STYLE}`
   const body = renderBody(messages, cwd)
   // Mermaid only when there is a diagram. Copied fresh each time, so the copy
-  // beside the pages is always the vendored, checksummed one.
+  // beside the pages is always the vendored, checksummed one. It ships gzipped
+  // to stay under the plugin directory's 5 MiB per-file limit.
   const mermaid = body.thread.includes(MERMAID_MARK)
   if (mermaid) {
     const lib = `${dir}/${MERMAID_FILE}`
-    await run($, ['cp', '-f', '--', `${$.plugin.root}/assets/${MERMAID_FILE}`, lib])
+    await run($, ['cp', '-f', '--', `${$.plugin.root}/assets/${MERMAID_FILE}.gz`, `${lib}.gz`])
+    await run($, ['gunzip', '-f', '--', `${lib}.gz`])
     await run($, ['chmod', '600', lib])
   }
   const html = renderPage({

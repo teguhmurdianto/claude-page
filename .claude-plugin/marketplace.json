@@ -1,0 +1,6 @@
+{
+  "name": "claude-page",
+  "description": "/page: the Claude Code session as a local, offline HTML page",
+  "owner": { "name": "Teguh Murdianto" },
+  "plugins": [{ "name": "page", "source": "./" }]
+}

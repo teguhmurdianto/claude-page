@@ -1,0 +1,11 @@
+{
+  "name": "page",
+  "version": "0.1.1",
+  "description": "/page: this session as a local, offline, throwaway HTML page",
+  "author": {
+    "name": "Teguh Murdianto"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/teguhmurdianto/claude-page",
+  "types": "./types/index.d.ts"
+}

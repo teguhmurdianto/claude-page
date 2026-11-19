@@ -16,6 +16,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Vendored mermaid matches its checksum
+        run: gunzip -c assets/mermaid.min.js.gz | sha256sum | cut -d' ' -f1 | grep -qx "$(cut -d' ' -f1 assets/mermaid.min.js.sha256)"
       - name: Install Claude Code
         run: npm install -g @anthropic-ai/claude-code
       - name: Validate against plugin directory rules

@@ -19,6 +19,6 @@ jobs:
       - name: Install Claude Code
         run: npm install -g @anthropic-ai/claude-code
       - name: Validate against plugin directory rules
-        run: claude plugin validate . --profile directory
+        run: claude plugin validate . --profile directory --strict
       - name: Test
         run: claude plugin test .
